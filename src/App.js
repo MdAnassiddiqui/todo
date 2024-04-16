@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useState } from 'react';
+import Form from "./component/todoForm";
+import Task from "./component/todoTask";
+import './component/style/app.scss';
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleAddTask = () => {
+    if (!inputValue.trim()) return;
+    const newTask = {
+      id: Date.now(),
+      description: inputValue.trim()
+    };
+    setTasks([...tasks, newTask]);
+    setInputValue('');
+  };
+
+  const handleDeleteTask = (taskId) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1 className='List'>To-Do List</h1>
+      <Form className="form"
+        onSubmit={handleAddTask}
+        inputValue={inputValue}
+        onInputChange={handleInputChange}
+      />
+      <div className='task'>
+        {tasks.map(task => (
+          <Task key={task.id} task={task} onDelete={handleDeleteTask} />
+        ))}
+      </div>
     </div>
   );
 }
